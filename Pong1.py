@@ -2,11 +2,7 @@
 import pygame, sys, random
 from pygame.locals import *
 from fonts import *
-
-
-import threading
-import time
-
+	
 BLACK       = (0, 0, 0)
 WHITE       = (255, 255, 255)
 RED 		= (205, 92, 92)
@@ -22,8 +18,6 @@ pygame.init()
 fpsClock = pygame.time.Clock()
 window_obj = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
 pygame.display.set_caption("Pong")
-
-input_array = []
 
 class Ball():
 	def __init__(self, radius, color):
@@ -144,7 +138,7 @@ def run_game(window_obj, ball, paddle1, paddle2):
 	check_collision(ball, paddle1, paddle2)
 	draw_scores(window_obj, paddle1.score, paddle2.score)
 	
-def new_game(window_obj = window_obj):
+def new_game(window_obj):
 	try:
 		pygame.mixer.music.load('music/cautious-path-01.mp3')
 		pygame.mixer.music.play(-1)	
@@ -156,8 +150,6 @@ def new_game(window_obj = window_obj):
 	paddle2   = Paddle([int(PAD_WIDTH*2),int(HEIGHT/2)], 0, PAD_WIDTH, PAD_HEIGHT, WHITE, 0)
 	option    = "nil"	
 	highlight = 1
-
-
 	while option == "nil":
 		window_obj.fill(BLACK)
 		draw_options(window_obj, highlight)
@@ -174,7 +166,6 @@ def new_game(window_obj = window_obj):
 			fpsClock.tick(60)						#run at 60 fps
 	game_loop(window_obj, ball, paddle1, paddle2, option)
 
-
 def read_data():
 	f = open('command.txt','r')
 	lines = f.readlines()
@@ -182,12 +173,10 @@ def read_data():
 		return 'X'
 	f.close()
 	f = open('command.txt','w')
-	if(lines[-1] == 'l'):
+	if(lines[-1] == 'u'):
 		return 'UP'
-	if(lines[-1] == 'x'):
-		return 'DOWN'
 	if(lines[-1] == 'd'):
-		return 'STOP'
+		return 'DOWN'
 
 def game_loop(window_obj, ball, paddle1, paddle2, two_player):
 	try:
@@ -205,19 +194,16 @@ def game_loop(window_obj, ball, paddle1, paddle2, two_player):
 			elif paddle2.score >= TOPSCORE:
 				win_msg(window_obj, 'Player 2')
 				return
-			
 			command = read_data()
 			if(command == 'UP'):
 				print('UP')
-				paddle1.vel = -2
-			if(command == 'DOWN'):
-				print('DOWN')
-				paddle1.vel = 2
-			if(command == 'STOP'):
-				print('STOP')
-				paddle1.vel = 0
-			
-
+				paddle1.vel = -4
+			else:
+				if(command == 'DOWN'):
+					print('DOWN')
+					paddle1.vel = 4
+				else:
+					paddle1.vel = 0
 			for event in pygame.event.get():			#event handler
 				if event.type == QUIT:
 					pygame.quit()
@@ -264,22 +250,4 @@ def game_loop(window_obj, ball, paddle1, paddle2, two_player):
 			pygame.display.update()
 			fpsClock.tick(60)						#run at 60 fps
 
-
-
 new_game(window_obj)
-
-
-      
-
-
-
-# t = time.time()
-# t1 = threading.Thread(target=new_game)
-#     #t2 = threading.Thread(target=write_data)
-
-# t1.start()
-#     # t2.start()
-
-#     # t1.join()
-#     # t2.join()
-
